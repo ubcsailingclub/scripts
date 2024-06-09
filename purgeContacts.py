@@ -3,8 +3,8 @@ from functools import reduce
 
 # load data
 # UPDATE the file names to read from
-contacts = pd.read_csv (r'~/Desktop/Rollback-3-19-23.csv')
-newsletters = [pd.read_csv (r'~/Desktop/AprilNewsletter.csv'), pd.read_csv (r'~/Desktop/FebruaryNewsletter.csv')]
+contacts = pd.read_csv("../2024-06-09 Contacts UBC Sailing Club.csv")
+newsletters = [pd.read_excel("../2024-06-09 Email details UBC Sailing Club Feb.xls"), pd.read_excel("../2024-06-09 Email details UBC Sailing Club April.xls")]
 
 # find members that can potentially be dropped (everyone who is Lapsed or was never active)
 dropCandidates =  set(contacts.loc[(contacts["Membership status"] == "Lapsed") | contacts["Membership status"].isnull(), "User ID"])
@@ -30,5 +30,5 @@ rollForward = contacts.loc[contacts["User ID"].isin(toRemove), ["User ID"]]
 rollForward["Archived"] = "yes"
 
 # UPDATE the file name to export the results to 
-rollForward.to_csv(r'~/Desktop/Rollforward-2023-03-19.csv', index=False,
+rollForward.to_csv("../2024-06-09 Post-Archival Contacts UBC Sailing Club.csv", index=False,
           header=True)
