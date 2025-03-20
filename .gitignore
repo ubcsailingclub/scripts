@@ -1,5 +1,7 @@
 # Please don't upload secret tokens:
 config.py
+gmail_web_client_secret.json
+token.json
 
 # OS generated files
 .DS_Store

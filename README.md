@@ -8,9 +8,9 @@ Steps:
 
 1. After logging into your Wild Apricot Admin account, go to `admin/contacts/` to download a list of contacts. Include the `User ID, Membership status, Subscribed to emails, and Archived` fields.
 
-2. Go to `admin/emails/log/`, and find the last few newsletters that were sent through Wild Apricot (Search UBSea). Export `User ID` and `Opened` fields. 
+2. Go to `admin/emails/log/`, and find the last few newsletters that were sent through Wild Apricot (Search UBSea). Export `User ID`, `Opened`, and `Clicked` fields.
 
-3. Replace the file names in the script with those that you just downloaded (marked UDPATE). Keep in mind the full file path.
+3. Replace the file names in the script with those that you just downloaded (marked UDPATE). Also update the output filename at the end of the script. Keep in mind the full file path.
 
 4. Ensure pandas is installed. Run the script.
 
