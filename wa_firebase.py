@@ -2,12 +2,27 @@ import datetime
 import tzlocal
 import urllib.parse
 
-from waapi import WildApricotClient
+# pip install firebase-admin
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+from waapi import WildApricotClient, APIObject
 from config import wild_apricot_api_key
 
 
 def now():
     return datetime.datetime.now(tz=tzlocal.get_localzone())
+
+
+def clean(data):
+    if isinstance(data, APIObject):
+        return data._json_cleans()
+    if isinstance(data, tuple):
+        return tuple(clean(elem) for elem in data)
+    if isinstance(data, list):
+        return [clean(elem) for elem in data]
+    return data
 
 
 class WildApricotCustomClient(WildApricotClient):
@@ -50,13 +65,44 @@ class WildApricotCustomClient(WildApricotClient):
         return self.request(request_url).Contacts
 
 
+def upload_changes(collection, updated_contacts, fields):
+    uploaded_contacts = {}
+    for contact in updated_contacts:
+        document_id = str(contact.Id)
+        doc = collection.document(document_id) # using WA Contact ID for document
+        data = {}
+        for field in contact.FieldValues:
+            if field.FieldName in fields:
+                data[field.FieldName] = clean(field.Value)
+        uploaded_contacts[document_id] = data
+        doc.set(data) # overwrites if exists!
+    return uploaded_contacts
+
+
 if __name__ == '__main__':
     since = now() - datetime.timedelta(minutes=5)
-    fields = ['First Name', 'Last Name', 'Jericho Card Number', 'Equipment certification achieved']
+    fields = ['First name', 'Last name', 'Jericho Card Number', 'Equipment certification achieved']
 
+    # WA
     api = WildApricotCustomClient(api_key=wild_apricot_api_key)
     updated_contacts = api.get_changed_members_since_datetime(since, fields)
     print(updated_contacts)
 
     groups = api.request(api.groups_requrl)
-    print(groups)
+    # list of all groups may be useful for UI in case new ones are added
+    # print(groups)
+    # { # example:
+    # "Id": 549803,
+    # "ContactsCount": 26,
+    # "Description": "Nacra F18. HP Room access.",
+    # "Name": "Sailing - Cat II"
+    # }
+
+    # Firebase
+    table = 'auto_members_test'
+    cred = credentials.Certificate("firebasedb_admin_sdk_secret.json")
+    firebase_admin.initialize_app(cred, {'projectId': 'digital-logbook-database'})
+    db = firestore.client()
+
+    uploaded_contacts = upload_changes(db.collection(table), updated_contacts, fields)
+    print(uploaded_contacts)

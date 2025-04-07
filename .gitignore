@@ -1,6 +1,7 @@
 # Please don't upload secret tokens:
 config.py
 gmail_web_client_secret.json
+firebasedb_admin_sdk_secret.json
 token.json
 
 # OS generated files

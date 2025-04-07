@@ -184,6 +184,9 @@ class APIObject:
     def _jsons_massive_dump(self):
         return json.dumps(self.__dict__, default=lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else obj.__dict__, indent=4)
 
+    def _json_cleans(self):
+        return json.loads(self._jsons_massive_dump())
+
     def __str__(self):
         return 'JSON: ' + self._jsons_massive_dump()
 
