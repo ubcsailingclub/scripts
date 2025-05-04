@@ -7,6 +7,7 @@ import numpy as np # pip install numpy
 from waapi import WildApricotClient
 from config import wild_apricot_api_key, ubc_auto_register_passphrase
 
+email = 'adam.subanloewen@gmail.com'
 hours_before = 48
 event_url = 'https://ubcsailing.org/event-5915272'
 
@@ -42,17 +43,16 @@ event_id = result["event_id"]
 
 api = WildApricotClient(api_key=wild_apricot_api_key)
 api.authenticate_with_apikey()
-accounts = api.request("/v2/accounts")
+# print(api.request("/")) # to get latest API version
+accounts = api.request("/v2.3/accounts")
 account = accounts[0]
 
+# print([res.Name for res in account.Resources])
 contacts_requrl = next(res for res in account.Resources if res.Name == 'Contacts').Url
 event_requrl = next(res for res in account.Resources if res.Name == 'Events').Url + event_id
 event_reg_requrl = next(res for res in account.Resources if res.Name == 'Event registrations').Url
-print(event_requrl)
-print(event_reg_requrl)
 
-contact = get_member_by_email('adam.subanloewen@gmail.com')
-
+contact = get_member_by_email(email)
 event = api.request(event_requrl)
 start = event.StartDate
 registrants = event.ConfirmedRegistrationsCount + event.PendingRegistrationsCount
@@ -65,14 +65,15 @@ registration_types = event.Details.RegistrationTypes
 most_expensive = np.argmax([reg_type.BasePrice for reg_type in registration_types])
 registration_type = registration_types[most_expensive]
 
-
 if not event.RegistrationEnabled:
     message = f"Registration is not enabled for event {event.Name}."
     raise ValueError(message) # reply with error message
 
-# print(event)
 registration = register_for_event(event, contact, registration_type)
 print(registration)
-# reply to user with message to ignore the "pending payment" email,
-# as the instructor should be able to confirm without invoice and they are already registered
-# TODO: test reminder/info email!!
+
+# RPC requests don't work; so manually create invoice and payment, and settle invoice with payment all using the API
+# reply to user with message to ignore the "pending payment" email and confirm it worked
+# test lesson confirmed email got sent
+
+
