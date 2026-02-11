@@ -27,7 +27,7 @@ class GDriveClient:
     ]
 
     def __init__(
-        self, credentials_filename, server_port=59587, token_filename="token.json"
+        self, credentials_filename, server_port=59587, token_filename="token_gdrive.json"
     ):
         self.credentials_filename = credentials_filename
         self.server_port = server_port

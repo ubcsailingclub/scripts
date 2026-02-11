@@ -1,8 +1,10 @@
 # Please don't upload secret tokens:
 config.py
 gmail_web_client_secret.json
+gdrive_client_secret.json
 firebasedb_admin_sdk_secret.json
-token.json
+token_gdrive.json
+token_gmail.json
 
 # OS generated files
 .DS_Store
